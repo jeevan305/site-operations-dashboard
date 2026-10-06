@@ -1,0 +1,218 @@
+<div class="sites-page">
+
+  <div class="page-header">
+    <div>
+      <h1>Sites</h1>
+      <p class="subtitle">Manage operational sites</p>
+    </div>
+
+    <button
+      class="add-button"
+      (click)="showForm = !showForm"
+    >
+      {{ showForm ? 'Cancel' : '+ Add Site' }}
+    </button>
+  </div>
+
+  @if (showForm) {
+    <div class="site-form">
+
+      <h2>Add New Site</h2>
+
+      <div class="form-row">
+
+        <input
+          type="text"
+          placeholder="Site name"
+          [(ngModel)]="newSite.name"
+        />
+
+        <input
+          type="text"
+          placeholder="Location"
+          [(ngModel)]="newSite.location"
+        />
+
+        <select [(ngModel)]="newSite.status">
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
+        </select>
+
+        <button
+          class="save-button"
+          (click)="addSite()"
+          [disabled]="saving"
+        >
+          {{ saving ? 'Saving...' : 'Save Site' }}
+        </button>
+
+      </div>
+
+      @if (formError) {
+        <p class="error">{{ formError }}</p>
+      }
+
+    </div>
+  }
+
+  @if (editingSiteId !== null) {
+    <div class="site-form">
+
+      <h2>Edit Site</h2>
+
+      <div class="form-row">
+
+        <input
+          type="text"
+          placeholder="Site name"
+          [(ngModel)]="editSite.name"
+        />
+
+        <input
+          type="text"
+          placeholder="Location"
+          [(ngModel)]="editSite.location"
+        />
+
+        <select [(ngModel)]="editSite.status">
+          <option value="ACTIVE">Active</option>
+          <option value="INACTIVE">Inactive</option>
+        </select>
+
+        <button
+          class="save-button"
+          (click)="updateSite()"
+          [disabled]="saving"
+        >
+          {{ saving ? 'Updating...' : 'Update Site' }}
+        </button>
+
+        <button
+          class="cancel-button"
+          (click)="editingSiteId = null"
+        >
+          Cancel
+        </button>
+
+      </div>
+
+    </div>
+  }
+
+  <div class="filters">
+
+    <input
+      type="text"
+      placeholder="Search by site name"
+      [(ngModel)]="searchName"
+    />
+
+    <select [(ngModel)]="selectedStatus">
+      <option value="">All Statuses</option>
+      <option value="ACTIVE">Active</option>
+      <option value="INACTIVE">Inactive</option>
+    </select>
+
+    <button
+      class="search-button"
+      (click)="searchSites()"
+    >
+      Search
+    </button>
+
+    <button
+      class="clear-button"
+      (click)="clearFilters()"
+    >
+      Clear
+    </button>
+
+  </div>
+
+  @if (loading) {
+    <p>Loading sites...</p>
+  }
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  @if (!loading && sites.length > 0) {
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Site Name</th>
+            <th>Location</th>
+            <th>Status</th>
+            <th>Created By</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          @for (site of sites; track site.id) {
+
+            <tr>
+
+              <td>{{ site.id }}</td>
+
+              <td>{{ site.name }}</td>
+
+              <td>{{ site.location }}</td>
+
+              <td>
+                <span
+                  class="status"
+                  [class.inactive]="site.status === 'INACTIVE'"
+                >
+                  {{ site.status }}
+                </span>
+              </td>
+
+              <td>
+                {{ site.createdByName || 'N/A' }}
+              </td>
+
+              <td>
+
+                <button
+                  class="edit-button"
+                  (click)="startEdit(site)"
+                >
+                  Edit
+                </button>
+
+                <button
+                  class="delete-button"
+                  (click)="deleteSite(site.id)"
+                >
+                  Delete
+                </button>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  } @else if (!loading && !error) {
+
+    <div class="empty-state">
+      <p>No sites found.</p>
+    </div>
+
+  }
+
+</div>

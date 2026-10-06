@@ -1,0 +1,43 @@
+<div class="dashboard">
+  <h1>Operations Dashboard</h1>
+  <p class="subtitle">Overview of site and installation activities</p>
+
+  @if (loading) {
+    <p>Loading dashboard...</p>
+  }
+
+  @if (error) {
+    <p class="error">{{ error }}</p>
+  }
+
+  @if (summary) {
+    <div class="cards">
+
+      <div class="card">
+        <h3>Total Sites</h3>
+        <p>{{ summary.totalSites }}</p>
+      </div>
+
+      <div class="card">
+        <h3>Total Installations</h3>
+        <p>{{ summary.totalInstallations }}</p>
+      </div>
+
+      <div class="card">
+        <h3>Completed</h3>
+        <p>{{ summary.completedInstallations }}</p>
+      </div>
+
+      <div class="card">
+        <h3>In Progress</h3>
+        <p>{{ summary.inProgressInstallations }}</p>
+      </div>
+
+      <div class="card">
+        <h3>Planned</h3>
+        <p>{{ summary.plannedInstallations }}</p>
+      </div>
+
+    </div>
+  }
+</div>

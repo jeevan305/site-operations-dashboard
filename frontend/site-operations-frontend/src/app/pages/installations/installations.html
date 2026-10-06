@@ -1,0 +1,455 @@
+<div class="installations-page">
+
+  <!-- Page Header -->
+
+  <div class="page-header">
+
+    <div>
+      <h1>Installations</h1>
+
+      <p class="subtitle">
+        Track installation activities across sites
+      </p>
+    </div>
+
+    <button
+      class="add-button"
+      (click)="showForm = !showForm"
+    >
+      {{ showForm ? 'Cancel' : '+ Add Installation' }}
+    </button>
+
+  </div>
+
+
+  <!-- Add Installation -->
+
+  @if (showForm) {
+
+    <div class="installation-form">
+
+      <h2>Add Installation</h2>
+
+      <div class="form-row">
+
+        <label class="form-field">
+          <span>Site ID</span>
+
+          <input
+            type="number"
+            [(ngModel)]="newInstallation.siteId"
+          />
+        </label>
+
+
+        <label class="form-field">
+          <span>Installation Type</span>
+
+          <input
+            type="text"
+            placeholder="e.g. Equipment Installation"
+            [(ngModel)]="newInstallation.installationType"
+          />
+        </label>
+
+
+        <label class="form-field">
+          <span>Status</span>
+
+          <select
+            [(ngModel)]="newInstallation.status"
+          >
+            <option value="PLANNED">
+              Planned
+            </option>
+
+            <option value="IN_PROGRESS">
+              In Progress
+            </option>
+
+            <option value="COMPLETED">
+              Completed
+            </option>
+          </select>
+        </label>
+
+
+        <label class="form-field">
+          <span>Technician ID</span>
+
+          <input
+            type="number"
+            [(ngModel)]="newInstallation.technicianId"
+          />
+        </label>
+
+      </div>
+
+
+      <div class="date-row">
+
+        <label class="form-field">
+          <span>Start Date</span>
+
+          <input
+            type="date"
+            [(ngModel)]="newInstallation.startDate"
+          />
+        </label>
+
+
+        <label class="form-field">
+          <span>Completion Date</span>
+
+          <input
+            type="date"
+            [(ngModel)]="newInstallation.completionDate"
+          />
+        </label>
+
+
+        <div class="form-actions">
+
+          <button
+            class="save-button"
+            (click)="addInstallation()"
+            [disabled]="saving"
+          >
+            {{ saving ? 'Saving...' : 'Save Installation' }}
+          </button>
+
+        </div>
+
+      </div>
+
+
+      @if (formError) {
+
+        <p class="error">
+          {{ formError }}
+        </p>
+
+      }
+
+    </div>
+
+  }
+
+
+  <!-- Edit Installation -->
+
+  @if (editingInstallationId !== null) {
+
+    <div class="installation-form">
+
+      <h2>Edit Installation</h2>
+
+      <div class="form-row">
+
+        <label class="form-field">
+          <span>Site ID</span>
+
+          <input
+            type="number"
+            [(ngModel)]="editInstallation.siteId"
+          />
+        </label>
+
+
+        <label class="form-field">
+          <span>Installation Type</span>
+
+          <input
+            type="text"
+            placeholder="e.g. Equipment Installation"
+            [(ngModel)]="editInstallation.installationType"
+          />
+        </label>
+
+
+        <label class="form-field">
+          <span>Status</span>
+
+          <select
+            [(ngModel)]="editInstallation.status"
+          >
+            <option value="PLANNED">
+              Planned
+            </option>
+
+            <option value="IN_PROGRESS">
+              In Progress
+            </option>
+
+            <option value="COMPLETED">
+              Completed
+            </option>
+          </select>
+        </label>
+
+
+        <label class="form-field">
+          <span>Technician ID</span>
+
+          <input
+            type="number"
+            [(ngModel)]="editInstallation.technicianId"
+          />
+        </label>
+
+      </div>
+
+
+      <div class="date-row">
+
+        <label class="form-field">
+          <span>Start Date</span>
+
+          <input
+            type="date"
+            [(ngModel)]="editInstallation.startDate"
+          />
+        </label>
+
+
+        <label class="form-field">
+          <span>Completion Date</span>
+
+          <input
+            type="date"
+            [(ngModel)]="editInstallation.completionDate"
+          />
+        </label>
+
+
+        <div class="form-actions">
+
+          <button
+            class="save-button"
+            (click)="updateInstallation()"
+            [disabled]="saving"
+          >
+            {{ saving ? 'Updating...' : 'Update Installation' }}
+          </button>
+
+          <button
+            class="cancel-button"
+            (click)="cancelEdit()"
+          >
+            Cancel
+          </button>
+
+        </div>
+
+      </div>
+
+
+      @if (formError) {
+
+        <p class="error">
+          {{ formError }}
+        </p>
+
+      }
+
+    </div>
+
+  }
+
+
+  <!-- Filters -->
+
+  <div class="filters">
+
+    <select
+      [(ngModel)]="selectedStatus"
+    >
+      <option value="">
+        All Statuses
+      </option>
+
+      <option value="PLANNED">
+        Planned
+      </option>
+
+      <option value="IN_PROGRESS">
+        In Progress
+      </option>
+
+      <option value="COMPLETED">
+        Completed
+      </option>
+    </select>
+
+
+    <input
+      type="number"
+      placeholder="Site ID"
+      [(ngModel)]="selectedSiteId"
+    />
+
+
+    <button
+      class="search-button"
+      (click)="filterInstallations()"
+    >
+      Filter
+    </button>
+
+
+    <button
+      class="clear-button"
+      (click)="clearFilters()"
+    >
+      Clear
+    </button>
+
+  </div>
+
+
+  <!-- Loading / Error -->
+
+  @if (loading) {
+
+    <p>Loading installations...</p>
+
+  }
+
+
+  @if (error) {
+
+    <p class="error">
+      {{ error }}
+    </p>
+
+  }
+
+
+  <!-- Table -->
+
+  @if (
+    !loading &&
+    installations.length > 0
+  ) {
+
+    <div class="table-container">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>ID</th>
+            <th>Site</th>
+            <th>Installation Type</th>
+            <th>Status</th>
+            <th>Technician</th>
+            <th>Start Date</th>
+            <th>Completion Date</th>
+            <th>Actions</th>
+          </tr>
+
+        </thead>
+
+
+        <tbody>
+
+          @for (
+            installation of installations;
+            track installation.id
+          ) {
+
+            <tr>
+
+              <td>
+                {{ installation.id }}
+              </td>
+
+              <td>
+                {{ installation.siteName }}
+              </td>
+
+              <td>
+                {{ installation.installationType }}
+              </td>
+
+              <td>
+
+                <span
+                  class="status"
+                  [class.planned]="
+                    installation.status === 'PLANNED'
+                  "
+                  [class.in-progress]="
+                    installation.status === 'IN_PROGRESS'
+                  "
+                  [class.completed]="
+                    installation.status === 'COMPLETED'
+                  "
+                >
+                  {{ installation.status }}
+                </span>
+
+              </td>
+
+              <td>
+                {{
+                  installation.technicianName || 'N/A'
+                }}
+              </td>
+
+              <td>
+                {{
+                  installation.startDate || 'N/A'
+                }}
+              </td>
+
+              <td>
+                {{
+                  installation.completionDate || 'N/A'
+                }}
+              </td>
+
+              <td class="actions">
+
+                <button
+                  class="edit-button"
+                  (click)="startEdit(installation)"
+                >
+                  Edit
+                </button>
+
+                <button
+                  class="delete-button"
+                  (click)="
+                    deleteInstallation(installation.id)
+                  "
+                >
+                  Delete
+                </button>
+
+              </td>
+
+            </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+  }
+  @else if (
+    !loading &&
+    !error
+  ) {
+
+    <div class="empty-state">
+      No installations found.
+    </div>
+
+  }
+
+</div>
