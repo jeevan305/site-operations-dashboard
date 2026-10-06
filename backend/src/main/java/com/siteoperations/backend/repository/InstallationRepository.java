@@ -12,4 +12,9 @@ public interface InstallationRepository extends JpaRepository<Installation, Long
 
     List<Installation> findBySiteId(Long siteId);
     
+    List<Installation> findByStatusIgnoreCaseAndSiteId(
+            String status,
+            Long siteId
+    );
+    
 }

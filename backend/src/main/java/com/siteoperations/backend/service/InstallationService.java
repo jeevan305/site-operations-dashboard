@@ -104,6 +104,17 @@ public class InstallationService {
 
         return toResponse(installationRepository.save(installation));
     }
+    
+    public List<InstallationResponse> getByStatusAndSite(
+            String status,
+            Long siteId) {
+
+        return installationRepository
+                .findByStatusIgnoreCaseAndSiteId(status, siteId)
+                .stream()
+                .map(this::toResponse)
+                .toList();
+    }
 
     public void deleteInstallation(Long id) {
 

@@ -88,11 +88,22 @@ public class SiteService {
 
         List<Site> sites;
 
-        if (name != null && !name.isBlank()) {
+        if (name != null && !name.isBlank()
+                && status != null && !status.isBlank()) {
+
+            sites = siteRepository
+                    .findByNameContainingIgnoreCaseAndStatusIgnoreCase(name, status);
+
+        } else if (name != null && !name.isBlank()) {
+
             sites = siteRepository.findByNameContainingIgnoreCase(name);
+
         } else if (status != null && !status.isBlank()) {
+
             sites = siteRepository.findByStatusIgnoreCase(status);
+
         } else {
+
             sites = siteRepository.findAll();
         }
 

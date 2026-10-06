@@ -10,4 +10,9 @@ public interface SiteRepository extends JpaRepository<Site, Long> {
     List<Site> findByStatusIgnoreCase(String status);
 
     List<Site> findByNameContainingIgnoreCase(String name);
+
+    List<Site> findByNameContainingIgnoreCaseAndStatusIgnoreCase(
+            String name,
+            String status
+    );
 }

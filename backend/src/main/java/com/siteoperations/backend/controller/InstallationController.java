@@ -26,6 +26,14 @@ public class InstallationController {
             @RequestParam(required = false) String status,
             @RequestParam(required = false) Long siteId) {
 
+        if (status != null && !status.isBlank()
+                && siteId != null) {
+
+            return ResponseEntity.ok(
+                    installationService.getByStatusAndSite(status, siteId)
+            );
+        }
+
         if (status != null && !status.isBlank()) {
             return ResponseEntity.ok(
                     installationService.getByStatus(status)
